@@ -1,42 +1,38 @@
-import { describe, it, expect } from 'bun:test';
-import { config } from '@mono-repo/core';
-
-// Import your app (you'll need to export it from index.ts)
-// import { app } from './index';
+import { describe, it, expect, beforeAll } from 'bun:test';
 
 describe('Backend API', () => {
-  it('should have valid configuration', () => {
+  beforeAll(() => {
+    // Set up test environment variables
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
+    process.env.JWT_SECRET = 'test-secret-key-for-testing-only';
+    process.env.NODE_ENV = 'test';
+  });
+
+  it('should have valid configuration', async () => {
+    // Import config after setting environment variables
+    const { config } = await import('@mono-repo/core');
+
     expect(config).toBeDefined();
     expect(config.app).toBeDefined();
     expect(config.app.port).toBeGreaterThan(0);
     expect(config.app.port).toBeLessThan(65536);
   });
 
-  it('should have database configuration', () => {
+  it('should have database configuration', async () => {
+    // Import config after setting environment variables
+    const { config } = await import('@mono-repo/core');
+
     expect(config.database).toBeDefined();
     expect(config.database.url).toBeDefined();
     expect(typeof config.database.url).toBe('string');
   });
 
-  it('should have JWT configuration', () => {
+  it('should have JWT configuration', async () => {
+    // Import config after setting environment variables
+    const { config } = await import('@mono-repo/core');
+
     expect(config.jwt).toBeDefined();
     expect(config.jwt.secret).toBeDefined();
     expect(typeof config.jwt.secret).toBe('string');
   });
-
-  // Example test for API endpoints (when you export the app)
-  /*
-  it('should respond to health check', async () => {
-    const res = await app.request('/health');
-    expect(res.status).toBe(200);
-    
-    const data = await res.json();
-    expect(data).toEqual({ status: 'ok' });
-  });
-
-  it('should handle 404 routes', async () => {
-    const res = await app.request('/nonexistent');
-    expect(res.status).toBe(404);
-  });
-  */
 });

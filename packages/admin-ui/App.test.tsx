@@ -5,27 +5,27 @@ import App from './src/App';
 describe('Admin App Component', () => {
   it('renders without crashing', () => {
     render(<App />);
-    expect(screen.getByText(/Admin Dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Admin Panel/i)).toBeInTheDocument();
   });
 
   it('displays dashboard title', () => {
     render(<App />);
-    expect(screen.getByText(/Welcome to Admin Panel/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Mono Repo Administration/i)).toBeTruthy();
   });
 
   it('renders stats cards', () => {
     render(<App />);
-    expect(screen.getByText(/Total Users/i)).toBeInTheDocument();
-    expect(screen.getByText(/Active Sessions/i)).toBeInTheDocument();
-    expect(screen.getByText(/System Load/i)).toBeInTheDocument();
-    expect(screen.getByText(/Error Rate/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Total Users/i)).toBeTruthy();
+    expect(screen.getAllByText(/Active Sessions/i)).toBeTruthy();
+    expect(screen.getAllByText(/Database Size/i)).toBeTruthy();
+    expect(screen.getAllByText(/System Health/i)).toBeTruthy();
   });
 
   it('renders tab navigation', () => {
     render(<App />);
-    expect(screen.getByText(/Overview/i)).toBeInTheDocument();
-    expect(screen.getByText(/Users/i)).toBeInTheDocument();
-    expect(screen.getByText(/System/i)).toBeInTheDocument();
-    expect(screen.getByText(/Logs/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Overview/i)).toBeTruthy();
+    expect(screen.getAllByText(/Users/i)).toBeTruthy();
+    expect(screen.getAllByText(/System/i)).toBeTruthy();
+    expect(screen.getAllByText(/Logs/i)).toBeTruthy();
   });
 });

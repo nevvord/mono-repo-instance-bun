@@ -2,16 +2,21 @@ module.exports = {
   apps: [
     {
       name: "mono-repo-backend",
-      script: "packages/backend/index.ts",
+      script: "packages/backend/server.ts",
       interpreter: "bun",
+      cwd: "./",
       cwd: "./",
       env: {
         NODE_ENV: "development",
         PORT: 3000,
+        DATABASE_URL: "postgresql://nevvord:3006556@localhost:5432/test",
+        JWT_SECRET: "test-secret-key",
       },
       env_production: {
         NODE_ENV: "production",
         PORT: 3000,
+        DATABASE_URL: "postgresql://test:test@localhost:5432/test",
+        JWT_SECRET: "test-secret-key",
       },
       watch: ["packages/backend/**/*", "packages/core/**/*"],
       ignore_watch: ["node_modules", "logs", ".git"],

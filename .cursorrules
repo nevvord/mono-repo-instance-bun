@@ -21,12 +21,8 @@ mono-repo/
 │   ├── backend/           # API server with Hono
 │   ├── web-ui/            # React 18 web interface with Radix UI
 │   └── admin-ui/          # React 18 admin panel with Radix UI
-├── prisma/               # Database configuration
-│   └── schema/           # Multi-file Prisma schema
-│       ├── base.prisma   # Main config (generator, datasource)
-│       ├── user.prisma   # User model
-│       ├── session.prisma # Session model
-│       └── enums.prisma  # Enums
+├── prisma/                # Database configuration
+│   └── schema.prisma      # Data base schema
 ├── config/               # Configuration files
 │   ├── index.ts          # Re-exports only (entry point)
 │   ├── validate-config.ts # Config validation function
@@ -136,6 +132,11 @@ bun run format:check     # Check code formatting
 bun run type-check       # Run TypeScript type checking
 bun run check            # Run all checks (type-check + lint + format:check)
 bun run check:fix        # Fix all issues (lint:fix + format)
+
+# Git Hooks (Husky)
+bun run prepare          # Initialize Husky
+bun run pre-commit       # Run pre-commit checks manually
+bun run pre-push         # Run pre-push checks manually
 ```
 
 ## File Naming Conventions
@@ -365,3 +366,4 @@ feature/
 - Keep one function per file (functional programming approach)
 - Separate types in `types/` directories
 - Use named exports, avoid default exports for functions
+- **Document all API endpoints in Bruno**: Every new API endpoint must be documented in `bruno/collections/api/` with proper request/response examples and error handling

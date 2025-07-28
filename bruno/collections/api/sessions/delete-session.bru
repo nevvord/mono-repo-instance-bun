@@ -1,0 +1,85 @@
+meta {
+  name: Terminate Session
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{base_url}}/v1/sessions/{{session_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+  Cookie: session_token={{session_token}}
+}
+
+docs {
+  # Terminate Session Endpoint
+  
+  This endpoint terminates a specific session for the authenticated user.
+  
+  ## Authentication
+  
+  Requires valid session token in cookie.
+  
+  ## Parameters
+  
+  - `session_id` (path): ID of the session to terminate
+  
+  ## Response
+  
+  ### Success (200 OK)
+  
+  ```json
+  {
+    "success": true,
+    "message": "Session terminated successfully"
+  }
+  ```
+  
+  ### Error (400 Bad Request)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Session ID is required"
+  }
+  ```
+  
+  ### Error (401 Unauthorized)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Authentication required"
+  }
+  ```
+  
+  ### Error (404 Not Found)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Session not found or cannot be terminated"
+  }
+  ```
+  
+  ### Error (500 Internal Server Error)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Failed to terminate session"
+  }
+  ```
+  
+  ## Notes
+  
+  - Users can only terminate their own sessions
+  - If terminating current session, cookie will be cleared
+  - Terminated sessions cannot be reactivated
+  - Session tokens are permanently invalidated
+} 

@@ -1,0 +1,83 @@
+meta {
+  name: Get User Sessions
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/v1/sessions
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+  Cookie: session_token={{session_token}}
+}
+
+docs {
+  # Get User Sessions Endpoint
+  
+  This endpoint returns all active sessions for the authenticated user.
+  
+  ## Authentication
+  
+  Requires valid session token in cookie.
+  
+  ## Response
+  
+  ### Success (200 OK)
+  
+  ```json
+  {
+    "success": true,
+    "sessions": [
+      {
+        "id": "session-id",
+        "expiresAt": "2024-01-16T10:30:00.000Z",
+        "userAgent": "Mozilla/5.0 Test Browser",
+        "ipAddress": "192.168.1.1",
+        "isActive": true,
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "isCurrentSession": true
+      }
+    ]
+  }
+  ```
+  
+  ### Error (401 Unauthorized)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Authentication required"
+  }
+  ```
+  
+  ```json
+  {
+    "success": false,
+    "error": "Invalid or expired session"
+  }
+  ```
+  
+  ### Error (500 Internal Server Error)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Failed to get sessions"
+  }
+  ```
+  
+  ## Session Information
+  
+  - `id`: Unique session identifier
+  - `expiresAt`: Session expiration timestamp
+  - `userAgent`: Browser/device information
+  - `ipAddress`: IP address where session was created
+  - `isActive`: Whether session is currently active
+  - `createdAt`: Session creation timestamp
+  - `isCurrentSession`: Whether this is the current session
+} 

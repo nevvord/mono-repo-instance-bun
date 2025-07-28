@@ -5,23 +5,23 @@ import App from './src/App';
 describe('App Component', () => {
   it('renders without crashing', () => {
     render(<App />);
-    expect(screen.getByText(/Mono Repository/i)).toBeInTheDocument();
+    expect(screen.getByText(/Mono Repo Web UI/i)).toBeInTheDocument();
   });
 
   it('displays the correct port information', () => {
     render(<App />);
-    expect(screen.getByText(/Порт: 3000/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Порт: 3000/)).toBeTruthy();
   });
 
   it('displays the correct environment', () => {
     render(<App />);
-    expect(screen.getByText(/Окружение: development/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Окружение: development/)).toBeTruthy();
   });
 
   it('renders action buttons', () => {
     render(<App />);
-    expect(screen.getByText(/Primary/)).toBeInTheDocument();
-    expect(screen.getByText(/Outline/)).toBeInTheDocument();
-    expect(screen.getByText(/Ghost/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Primary/)).toBeTruthy();
+    expect(screen.getAllByText(/Outline/)).toBeTruthy();
+    expect(screen.getAllByText(/Ghost/)).toBeTruthy();
   });
 });

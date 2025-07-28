@@ -15,6 +15,8 @@
     "backend:logs": "pm2 logs mono-repo-backend",
     "backend:status": "pm2 status",
     "backend:monit": "pm2 monit",
+    "bruno:open": "echo 'Please install Bruno from https://www.usebruno.com/ and open the bruno/ directory'",
+    "bruno:test": "echo 'Bruno tests can be run from the Bruno desktop application'",
     "web-ui:dev": "pm2 start ecosystem.config.cjs --env development --only mono-repo-web-ui",
     "web-ui:start": "pm2 start ecosystem.config.cjs --env production --only mono-repo-web-ui",
     "web-ui:stop": "pm2 stop mono-repo-web-ui",
@@ -55,26 +57,27 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "eslint": "^9.18.0",
-    "@eslint/js": "^9.18.0",
-    "eslint-config-prettier": "^10.0.1",
-    "prettier": "^3.4.2",
-    "typescript": "^5.0.0",
-    "typescript-eslint": "^8.20.0",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/jest-dom": "^6.6.3",
+    "eslint": "^9.32.0",
+    "@eslint/js": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/jest-dom": "^6.6.4",
     "jsdom": "^25.0.1",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2"
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
-    "@prisma/client": "^6.12.0",
+    "@prisma/client": "^6.13.0",
     "@types/bcryptjs": "^3.0.0",
     "bcryptjs": "^3.0.2",
-    "prisma": "^6.12.0"
+    "dotenv": "^17.2.1",
+    "prisma": "^6.13.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

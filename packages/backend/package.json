@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "hono": "^4.1.0",
-    "@mono-repo/core": "workspace:*"
+    "@mono-repo/core": "workspace:*",
+    "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/bcryptjs": "^2.4.6"
   }
 }

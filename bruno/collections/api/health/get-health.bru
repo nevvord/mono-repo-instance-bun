@@ -1,0 +1,39 @@
+meta {
+  name: Get Health Check
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/v1/health
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+}
+
+docs {
+  # Health Check Endpoint
+  
+  This endpoint is used to check if the API server is running and healthy.
+  
+  ## Response
+  
+  Returns a JSON object with:
+  - `status`: Always "ok" if server is healthy
+  - `timestamp`: Current server timestamp
+  - `environment`: Current environment (development, production, etc.)
+  
+  ## Example Response
+  
+  ```json
+  {
+    "status": "ok",
+    "timestamp": "2024-01-15T10:30:00.000Z",
+    "environment": "development"
+  }
+  ```
+}

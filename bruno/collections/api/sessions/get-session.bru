@@ -1,0 +1,92 @@
+meta {
+  name: Get Session Info
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/v1/sessions/{{session_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+  Cookie: session_token={{session_token}}
+}
+
+docs {
+  # Get Session Info Endpoint
+  
+  This endpoint returns detailed information about a specific session.
+  
+  ## Authentication
+  
+  Requires valid session token in cookie.
+  
+  ## Parameters
+  
+  - `session_id` (path): ID of the session to retrieve
+  
+  ## Response
+  
+  ### Success (200 OK)
+  
+  ```json
+  {
+    "success": true,
+    "session": {
+      "id": "session-id",
+      "expiresAt": "2024-01-16T10:30:00.000Z",
+      "userAgent": "Mozilla/5.0 Test Browser",
+      "ipAddress": "192.168.1.1",
+      "isActive": true,
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "isCurrentSession": true
+    }
+  }
+  ```
+  
+  ### Error (400 Bad Request)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Session ID is required"
+  }
+  ```
+  
+  ### Error (401 Unauthorized)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Authentication required"
+  }
+  ```
+  
+  ### Error (404 Not Found)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Session not found"
+  }
+  ```
+  
+  ### Error (500 Internal Server Error)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Failed to get session info"
+  }
+  ```
+  
+  ## Notes
+  
+  - Users can only access their own sessions
+  - Expired sessions will return 404
+  - Session tokens are not included in response for security
+} 
