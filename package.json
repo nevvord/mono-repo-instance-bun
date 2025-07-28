@@ -15,13 +15,23 @@
     "backend:logs": "pm2 logs mono-repo-backend",
     "backend:status": "pm2 status",
     "backend:monit": "pm2 monit",
-    "web-ui:dev": "cd packages/web-ui && bun run dev",
+    "web-ui:dev": "pm2 start ecosystem.config.cjs --env development --only mono-repo-web-ui",
+    "web-ui:start": "pm2 start ecosystem.config.cjs --env production --only mono-repo-web-ui",
+    "web-ui:stop": "pm2 stop mono-repo-web-ui",
+    "web-ui:restart": "pm2 restart mono-repo-web-ui",
+    "web-ui:logs": "pm2 logs mono-repo-web-ui",
     "web-ui:build": "cd packages/web-ui && bun run build",
     "web-ui:preview": "cd packages/web-ui && bun run preview",
     "web-ui:check": "cd packages/web-ui && bun run check",
     "web-ui:format": "cd packages/web-ui && bun run format",
     "web-ui:lint": "cd packages/web-ui && bun run lint",
-    "web-ui:test": "cd packages/web-ui && bun run test"
+    "web-ui:test": "cd packages/web-ui && bun run test",
+    "dev:all": "pm2 start ecosystem.config.cjs --env development",
+    "start:all": "pm2 start ecosystem.config.cjs --env production",
+    "stop:all": "pm2 stop all",
+    "restart:all": "pm2 restart all",
+    "logs:all": "pm2 logs",
+    "status:all": "pm2 status"
   },
   "devDependencies": {
     "@types/bun": "latest"
