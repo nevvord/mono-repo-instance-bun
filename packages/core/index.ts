@@ -6,5 +6,5 @@ export * from './config';
 // Types
 export * from './types';
 
-// Utils - disabled until needed
-// export * from './utils';
+// Utils
+export * from './utils';

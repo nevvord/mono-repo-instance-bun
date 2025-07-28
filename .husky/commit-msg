@@ -28,14 +28,14 @@ if [ ${#first_line} -gt 72 ]; then
 fi
 
 # Проверяем, что сообщение не заканчивается точкой
-if [[ "$first_line" == *"." ]]; then
+if echo "$first_line" | grep -q '\.$'; then
   echo "❌ Error: Commit message should not end with a period"
   echo "Message: '$first_line'"
   exit 1
 fi
 
 # Проверяем, что первая буква не заглавная
-if [[ "$first_line" =~ ^[A-Z] ]]; then
+if echo "$first_line" | grep -q '^[A-Z]'; then
   echo "❌ Error: Commit message should not start with capital letter"
   echo "Message: '$first_line'"
   exit 1

@@ -13,6 +13,7 @@
 - **[Core](./docs/core-readme.md)** - Документация основного пакета
 - **[Конфигурация](./docs/config-readme.md)** - Документация системы конфигурации
 - **[Husky Setup](./docs/husky-setup.md)** - Настройка Git hooks
+- **[Bruno API](./docs/bruno-api-readme.md)** - API документация и тестирование
 
 ## 🚀 Быстрый старт
 
@@ -40,6 +41,7 @@ mono-repo/
 │   ├── backend/            # 🖥️ API сервер (Hono)
 │   ├── web-ui/             # 🌐 Веб-интерфейс (React + Radix UI)
 │   └── admin-ui/           # ⚙️ Админ панель (React + Radix UI)
+├── bruno/                  # 🔌 API документация и тестирование
 ├── prisma/                 # 🗄️ База данных (PostgreSQL)
 ├── config/                 # ⚙️ Конфигурация
 └── ecosystem.config.cjs    # 🔄 PM2 конфигурация
@@ -54,6 +56,7 @@ mono-repo/
 - **Testing**: Bun test + Testing Library
 - **Code Quality**: ESLint + Prettier + TypeScript
 - **Process Management**: PM2
+- **API Testing**: Bruno (Git-friendly API client)
 
 ## 🔗 Полезные ссылки
 
@@ -62,6 +65,7 @@ mono-repo/
 - [Radix UI](https://www.radix-ui.com/) - Headless UI components
 - [Prisma](https://www.prisma.io/) - Database toolkit
 - [PM2](https://pm2.keymetrics.io/) - Process manager
+- [Bruno](https://www.usebruno.com/) - Git-friendly API client
 
 ## 📄 Лицензия
 

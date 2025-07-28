@@ -1,0 +1,64 @@
+meta {
+  name: Logout
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/v1/sessions/logout
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+  Cookie: session_token={{session_token}}
+}
+
+docs {
+  # Logout Endpoint
+  
+  This endpoint logs out the current user by terminating their current session.
+  
+  ## Authentication
+  
+  Requires valid session token in cookie.
+  
+  ## Response
+  
+  ### Success (200 OK)
+  
+  ```json
+  {
+    "success": true,
+    "message": "Logged out successfully"
+  }
+  ```
+  
+  ### Error (401 Unauthorized)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Authentication required"
+  }
+  ```
+  
+  ### Error (500 Internal Server Error)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Failed to logout"
+  }
+  ```
+  
+  ## Notes
+  
+  - Terminates only the current session
+  - Session cookie will be cleared
+  - Other sessions remain active
+  - User can login again with same credentials
+  - Session token is permanently invalidated
+} 

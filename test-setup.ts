@@ -9,7 +9,7 @@ const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
 
 // Make JSDOM globals available
 global.document = dom.window.document;
-global.window = dom.window as any;
+global.window = dom.window as unknown as Window & typeof globalThis;
 global.navigator = dom.window.navigator;
 global.location = dom.window.location;
 global.history = dom.window.history;
@@ -42,18 +42,21 @@ global.IntersectionObserver = class IntersectionObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
-};
+  takeRecords() {
+    return [];
+  }
+} as unknown as typeof IntersectionObserver;
 
 // Mock getComputedStyle
-global.getComputedStyle = (_element: any) => {
+global.getComputedStyle = (_element: Element) => {
   return {
     getPropertyValue: (_prop: string) => '',
-  };
+  } as CSSStyleDeclaration;
 };
 
 // Mock requestAnimationFrame
 global.requestAnimationFrame = (callback: FrameRequestCallback) => {
-  return setTimeout(callback, 0) as any;
+  return setTimeout(callback, 0) as ReturnType<typeof requestAnimationFrame>;
 };
 
 // Mock cancelAnimationFrame

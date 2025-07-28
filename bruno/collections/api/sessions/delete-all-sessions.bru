@@ -1,0 +1,65 @@
+meta {
+  name: Terminate All Sessions
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{base_url}}/v1/sessions
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+  Cookie: session_token={{session_token}}
+}
+
+docs {
+  # Terminate All Sessions Endpoint
+  
+  This endpoint terminates all active sessions for the authenticated user.
+  
+  ## Authentication
+  
+  Requires valid session token in cookie.
+  
+  ## Response
+  
+  ### Success (200 OK)
+  
+  ```json
+  {
+    "success": true,
+    "message": "All sessions terminated successfully",
+    "terminatedCount": 3
+  }
+  ```
+  
+  ### Error (401 Unauthorized)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Authentication required"
+  }
+  ```
+  
+  ### Error (500 Internal Server Error)
+  
+  ```json
+  {
+    "success": false,
+    "error": "Failed to terminate all sessions"
+  }
+  ```
+  
+  ## Notes
+  
+  - Terminates all active sessions for the user
+  - Current session cookie will be cleared
+  - User will be logged out from all devices
+  - `terminatedCount` shows number of sessions terminated
+  - All session tokens are permanently invalidated
+} 
