@@ -1,0 +1,22 @@
+{
+  "name": "@mono-repo/core",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.ts",
+  "exports": {
+    "./config": "./config/index.ts",
+    "./types": "./types/index.ts",
+    "./utils": "./utils/index.ts"
+  },
+  "scripts": {
+    "dev": "bun run index.ts",
+    "build": "bun build index.ts --outdir dist",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5"
+  },
+  "dependencies": {},
+  "peerDependencies": {}
+}

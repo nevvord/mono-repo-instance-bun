@@ -3,6 +3,26 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun run index.ts",
+    "backend:dev": "pm2 start ecosystem.config.cjs --env development",
+    "backend:start": "pm2 start ecosystem.config.cjs --env production",
+    "backend:stop": "pm2 stop mono-repo-backend",
+    "backend:restart": "pm2 restart mono-repo-backend",
+    "backend:logs": "pm2 logs mono-repo-backend",
+    "backend:status": "pm2 status",
+    "backend:monit": "pm2 monit",
+    "web-ui:dev": "cd packages/web-ui && bun run dev",
+    "web-ui:build": "cd packages/web-ui && bun run build",
+    "web-ui:preview": "cd packages/web-ui && bun run preview",
+    "web-ui:check": "cd packages/web-ui && bun run check",
+    "web-ui:format": "cd packages/web-ui && bun run format",
+    "web-ui:lint": "cd packages/web-ui && bun run lint",
+    "web-ui:test": "cd packages/web-ui && bun run test"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },

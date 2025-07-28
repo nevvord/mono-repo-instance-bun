@@ -1,0 +1,182 @@
+# Mono Repository Rules and Conventions
+
+## Project Structure
+
+This is a monorepo using Bun as the package manager and runtime with the following structure:
+
+```
+mono-repo/
+├── .pro/                   # Generated files (ignored by git)
+│   └── prisma/            # Generated Prisma client
+├── packages/              # All applications and packages
+├── prisma/               # Database configuration
+│   └── schema/           # Multi-file Prisma schema
+│       ├── base.prisma   # Main config (generator, datasource)
+│       ├── user.prisma   # User model
+│       ├── session.prisma # Session model
+│       └── enums.prisma  # Enums
+├── config/               # Configuration files
+│   ├── index.ts          # Re-exports only (entry point)
+│   ├── validate-config.ts # Config validation function
+│   ├── types/config.ts   # Type definitions
+│   └── README.md         # Configuration documentation
+├── .env.example          # Environment variables example
+└── package.json          # Root package configuration
+```
+
+## Technology Stack
+
+- **Runtime**: Bun (JavaScript runtime and package manager)
+- **Database**: PostgreSQL with Prisma ORM
+- **Language**: TypeScript
+- **Architecture**: Monorepo structure
+
+## Database Models
+
+### User Model (`prisma/schema/user.prisma`)
+
+- Authentication system with email/username login
+- Fields: id, email, username, password, firstName, lastName, avatar
+- Status fields: isActive, isVerified
+- Role system: USER, ADMIN, MODERATOR
+- Timestamps: createdAt, updatedAt
+
+### Session Model (`prisma/schema/session.prisma`)
+
+- User authentication sessions
+- Fields: id, userId, token, expiresAt, userAgent, ipAddress
+- Status: isActive
+- Cascade delete with user
+
+### Enums (`prisma/schema/enums.prisma`)
+
+- UserRole: USER, ADMIN, MODERATOR
+
+## Prisma Multi-File Schema
+
+- Uses native Prisma multi-file support (prismaSchemaFolder)
+- Schema files located in `prisma/schema/` directory
+- Base configuration in `base.prisma`
+- Models can reference each other across files
+- Generated client output: `.pro/prisma/`
+
+## Commands and Workflows
+
+### Database Commands
+
+```bash
+# Validate schema
+bunx prisma validate --schema=prisma/schema
+
+# Generate Prisma client
+bunx prisma generate --schema=prisma/schema
+
+# Run migrations
+bunx prisma migrate dev --schema=prisma/schema --name <migration-name>
+
+# Open Prisma Studio
+bunx prisma studio --schema=prisma/schema
+```
+
+### Development Commands
+
+```bash
+# Install dependencies
+bun install
+
+# Run development server
+bun run dev
+
+# Run main application
+bun run index.ts
+```
+
+## File Naming Conventions
+
+- **All files and directories**: kebab-case only (e.g., `validate-config.ts`, `user-service/`)
+- **Prisma models**: lowercase with descriptive names (e.g., `user.prisma`, `session.prisma`)
+- **Generated files**: All in `.pro/` directory
+
+## Git Conventions
+
+- **Commits**: English only
+- **Generated files**: Ignored via `.pro/` in .gitignore
+- **Environment files**: Use `.env.example` as template
+
+## Code Style
+
+- **Comments in code**: English only
+- **Chat/communication**: Russian
+- **TypeScript**: Strict mode enabled
+- **Import paths**: Use relative paths to `.pro/prisma` for Prisma client
+
+## File Organization Rules
+
+- **Index files**: Use only for re-exports, no business logic
+- **File naming**: Names must describe what happens inside the file (e.g., `validate-config.ts`, `hash-password.ts`)
+- **Naming convention**: All files and directories use kebab-case only
+- **No OOP**: Avoid classes, use functional programming approach
+- **One function per file**: Each file should contain only one main function
+- **Types separation**: All types must be in separate `types/` directories next to the code
+- **Multiple functions**: If more than one function needed, create `helpers/` directory nearby
+- **Function exports**: Use named exports, avoid default exports for functions
+
+### File Organization Examples
+
+```
+feature/
+├── index.ts              # Re-exports only
+├── process-data.ts       # Single function: processData()
+├── validate-input.ts     # Single function: validateInput()
+├── types/
+│   ├── process-result.ts # Type definitions
+│   └── validation-rule.ts # Type definitions
+└── helpers/              # If multiple helper functions needed
+    ├── format-output.ts  # Single helper function
+    └── sanitize-input.ts # Single helper function
+```
+
+## Environment Setup
+
+1. Copy `.env.example` to `.env`
+2. Configure DATABASE_URL for PostgreSQL
+3. Set JWT_SECRET for session tokens
+4. Set NODE_ENV and PORT if needed
+5. Run `bunx prisma generate --schema=prisma/schema`
+6. Run migrations: `bunx prisma migrate dev --schema=prisma/schema`
+
+## Configuration System
+
+- **Typed configuration**: Use `import { config } from './config'`
+- **Environment validation**: Required variables validated at startup
+- **Type safety**: All config values are properly typed
+- **Error handling**: Clear messages for missing/invalid config
+
+## Adding New Models
+
+1. Create new `.prisma` file in `prisma/schema/`
+2. Define model with proper relations
+3. Run `bunx prisma generate --schema=prisma/schema`
+4. Create and run migration if needed
+
+## Adding New Packages
+
+1. Create directory in `packages/`
+2. Initialize with `bun init`
+3. Add shared dependencies to root `package.json`
+4. Import Prisma client from `../.pro/prisma`
+
+## Authentication System
+
+- Password hashing with bcryptjs
+- Session-based authentication with tokens
+- Role-based access control
+- User verification system
+
+## Best Practices
+
+- Keep models in separate files by domain
+- Use clear, descriptive names for schema files
+- Maintain single source of truth in `base.prisma` for config
+- Always specify `--schema=prisma/schema` for Prisma commands
+- Use `.pro/` for all generated files to keep workspace clean

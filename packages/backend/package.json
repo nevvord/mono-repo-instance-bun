@@ -1,0 +1,22 @@
+{
+  "name": "@mono-repo/backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "bun run --watch --cwd ../../ packages/backend/index.ts",
+    "start": "bun run --cwd ../../ packages/backend/index.ts",
+    "build": "bun build index.ts --outdir dist",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "hono": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@mono-repo/core": "workspace:*"
+  }
+}

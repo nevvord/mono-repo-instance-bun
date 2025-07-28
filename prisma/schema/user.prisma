@@ -1,0 +1,20 @@
+// User model for authentication
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  avatar    String?
+  isActive  Boolean  @default(true)
+  isVerified Boolean @default(false)
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sessions Session[]
+
+  @@map("users")
+} 
