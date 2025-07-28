@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 echo "📝 Checking commit message format..."
 
 # Получаем сообщение коммита
