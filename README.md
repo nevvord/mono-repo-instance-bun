@@ -1,167 +1,68 @@
-# Mono Repo Instance with Bun
+# 🚀 Mono Repository
 
-A modern monorepo setup using Bun as the package manager and runtime, with Prisma for database management, Svelte for web UI, and authentication models.
+Современный монорепозиторий для разработки веб-приложений с использованием Bun, React, TypeScript и других современных технологий.
 
-## 🚀 Features
+## 📚 Документация
 
-- **Bun Runtime**: Fast JavaScript runtime and package manager
-- **Prisma ORM**: Type-safe database access with PostgreSQL
-- **Svelte 5**: Modern web framework for UI
-- **Melt UI**: Headless UI components for Svelte
-- **Authentication System**: User and session management
-- **TypeScript**: Full type safety throughout the project
-- **Monorepo Structure**: Organized packages for multiple applications
+Вся документация проекта находится в папке [`docs/`](./docs/):
 
-## 📁 Project Structure
+- **[Обзор проекта](./docs/project-overview.md)** - Основная информация о проекте, архитектуре и технологиях
+- **[PM2 развертывание](./docs/pm2-deployment.md)** - Руководство по развертыванию с PM2
+- **[Web UI](./docs/web-ui-readme.md)** - Документация веб-интерфейса
+- **[Admin UI](./docs/admin-ui-readme.md)** - Документация админ панели
+- **[Core](./docs/core-readme.md)** - Документация основного пакета
+- **[Конфигурация](./docs/config-readme.md)** - Документация системы конфигурации
+- **[Husky Setup](./docs/husky-setup.md)** - Настройка Git hooks
+
+## 🚀 Быстрый старт
+
+```bash
+# Установка зависимостей
+bun install
+
+# Запуск всех сервисов в режиме разработки
+bun run dev:all
+
+# Проверка кода
+bun run check
+
+# Запуск тестов
+bun test
+```
+
+## 📦 Структура проекта
 
 ```
 mono-repo/
-├── packages/           # All applications and packages
-│   ├── core/          # Shared types, config, and utilities
-│   ├── backend/       # API server with Hono
-│   └── web-ui/        # Svelte 5 web interface
-├── prisma/            # Database schema and migrations
-│   └── schema/        # Multi-file Prisma schema
-│       ├── base.prisma   # Main config (generator, datasource)
-│       ├── user.prisma   # User model
-│       ├── session.prisma # Session model
-│       └── enums.prisma  # Enums
-├── config/            # Configuration files
-│   ├── index.ts          # Re-exports only (entry point)
-│   ├── validate-config.ts # Config validation function
-│   ├── types/config.ts   # Type definitions
-│   └── README.md         # Configuration documentation
-├── .env.example          # Environment variables example
-└── package.json          # Root package configuration
+├── docs/                    # 📚 Документация
+├── packages/                # 📦 Пакеты приложений
+│   ├── core/               # 🔧 Общие типы и утилиты
+│   ├── backend/            # 🖥️ API сервер (Hono)
+│   ├── web-ui/             # 🌐 Веб-интерфейс (React + Radix UI)
+│   └── admin-ui/           # ⚙️ Админ панель (React + Radix UI)
+├── prisma/                 # 🗄️ База данных (PostgreSQL)
+├── config/                 # ⚙️ Конфигурация
+└── ecosystem.config.cjs    # 🔄 PM2 конфигурация
 ```
 
-## 🗄️ Database Models
+## 🛠️ Технологии
 
-### User Model
+- **Runtime**: Bun
+- **Frontend**: React 18 + Radix UI + Tailwind CSS
+- **Backend**: Hono (Fast web framework)
+- **Database**: PostgreSQL + Prisma ORM
+- **Testing**: Bun test + Testing Library
+- **Code Quality**: ESLint + Prettier + TypeScript
+- **Process Management**: PM2
 
-- `id`: Unique identifier (CUID)
-- `email`: Unique email address
-- `username`: Unique username
-- `password`: Hashed password
-- `firstName`, `lastName`: Optional name fields
-- `avatar`: Optional avatar URL
-- `isActive`: Account status
-- `isVerified`: Email verification status
-- `role`: User role (USER, ADMIN, MODERATOR)
-- `createdAt`, `updatedAt`: Timestamps
+## 🔗 Полезные ссылки
 
-### Session Model
+- [Bun](https://bun.sh/) - JavaScript runtime
+- [Hono](https://hono.dev/) - Fast web framework
+- [Radix UI](https://www.radix-ui.com/) - Headless UI components
+- [Prisma](https://www.prisma.io/) - Database toolkit
+- [PM2](https://pm2.keymetrics.io/) - Process manager
 
-- `id`: Unique identifier (CUID)
-- `userId`: Reference to user
-- `token`: Unique session token
-- `expiresAt`: Session expiration date
-- `userAgent`: Browser/device info
-- `ipAddress`: Client IP address
-- `isActive`: Session status
-- `createdAt`, `updatedAt`: Timestamps
+## 📄 Лицензия
 
-## 🛠️ Setup Instructions
-
-1. **Clone the repository**
-
-   ```bash
-   git clone git@github.com:nevvord/mono-repo-instance-bun.git
-   cd mono-repo-instance-bun
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   bun install
-   ```
-
-3. **Setup environment variables**
-
-   ```bash
-   cp config/database.example.env .env
-   # Edit .env with your database credentials
-   ```
-
-4. **Setup database**
-
-   ```bash
-   # Generate Prisma client
-   bunx prisma generate
-
-   # Run database migrations
-   bunx prisma migrate dev --name init
-   ```
-
-5. **Start development**
-   ```bash
-   bun run index.ts
-   ```
-
-## 📦 Available Scripts
-
-### Backend
-
-- `bun run backend:dev` - Start backend development server with PM2
-- `bun run backend:start` - Start backend production server
-- `bun run backend:stop` - Stop backend server
-- `bun run backend:restart` - Restart backend server
-- `bun run backend:logs` - View backend logs
-- `bun run backend:status` - Check backend status
-
-### Web UI
-
-- `bun run web-ui:dev` - Start web UI development server
-- `bun run web-ui:build` - Build web UI for production
-- `bun run web-ui:preview` - Preview production build
-- `bun run web-ui:check` - Type check web UI
-- `bun run web-ui:format` - Format web UI code
-- `bun run web-ui:lint` - Lint web UI code
-
-### Database
-
-- `bunx prisma generate --schema=prisma/schema` - Generate Prisma client
-- `bunx prisma migrate dev --schema=prisma/schema` - Run database migrations
-- `bunx prisma studio --schema=prisma/schema` - Open Prisma Studio
-
-## 🔧 Development
-
-### Adding New Packages
-
-1. Create a new directory in `packages/`
-2. Initialize with `bun init`
-3. Add shared dependencies to root `package.json`
-4. Update workspace configuration
-
-### Database Changes
-
-1. Modify files in `prisma/schema/`
-2. Run `bunx prisma migrate dev --schema=prisma/schema --name <migration-name>`
-3. Update types if needed
-
-### Web UI Development
-
-1. Start development server: `bun run web-ui:dev`
-2. Open http://localhost:5173
-3. Use Melt UI components for consistent design
-4. Follow Svelte 5 best practices
-
-### Backend Development
-
-1. Start development server: `bun run backend:dev`
-2. API available at http://localhost:3000
-3. Use PM2 for process management
-4. Check logs: `bun run backend:logs`
-
-## 🔐 Authentication
-
-The project includes a complete authentication system with:
-
-- User registration and login
-- Session management
-- Password hashing with bcrypt
-- Role-based access control
-
-## 📝 License
-
-MIT License - feel free to use this project as a starting point for your own applications.
+MIT

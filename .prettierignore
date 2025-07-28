@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+packages/*/node_modules/
+
+# Build outputs
+packages/*/build/
+packages/*/dist/
+packages/*/.svelte-kit/
+
+# Generated files
+.pro/
+*.min.js
+*.min.css
+
+# Package files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Config files
+*.config.js
+*.config.ts
+ecosystem.config.cjs
+
+# Public assets
+packages/*/public/
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db 

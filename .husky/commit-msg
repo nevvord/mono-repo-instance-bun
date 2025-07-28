@@ -1,0 +1,47 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "📝 Checking commit message format..."
+
+# Получаем сообщение коммита
+commit_msg=$(cat "$1")
+
+# Проверяем, что сообщение коммита не пустое
+if [ -z "$commit_msg" ]; then
+  echo "❌ Error: Commit message cannot be empty"
+  exit 1
+fi
+
+# Получаем первую строку сообщения
+first_line=$(echo "$commit_msg" | head -n1)
+
+# Проверяем минимальную длину сообщения
+if [ ${#first_line} -lt 10 ]; then
+  echo "❌ Error: Commit message is too short (minimum 10 characters)"
+  echo "Current message: '$first_line'"
+  exit 1
+fi
+
+# Проверяем максимальную длину первой строки
+if [ ${#first_line} -gt 72 ]; then
+  echo "❌ Error: Commit message first line is too long (maximum 72 characters)"
+  echo "Current length: ${#first_line} characters"
+  echo "Message: '$first_line'"
+  exit 1
+fi
+
+# Проверяем, что сообщение не заканчивается точкой
+if [[ "$first_line" == *"." ]]; then
+  echo "❌ Error: Commit message should not end with a period"
+  echo "Message: '$first_line'"
+  exit 1
+fi
+
+# Проверяем, что первая буква не заглавная
+if [[ "$first_line" =~ ^[A-Z] ]]; then
+  echo "❌ Error: Commit message should not start with capital letter"
+  echo "Message: '$first_line'"
+  exit 1
+fi
+
+echo "✅ Commit message format is valid" 

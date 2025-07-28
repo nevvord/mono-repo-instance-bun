@@ -1,10 +1,10 @@
 // Core package entry point - re-exports only
 
 // Configuration
-export * from "./config";
+export * from './config';
 
 // Types
-export * from "./types";
+export * from './types';
 
-// Utils
-export * from "./utils";
+// Utils - disabled until needed
+// export * from './utils';

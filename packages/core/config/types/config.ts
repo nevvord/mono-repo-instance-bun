@@ -8,7 +8,7 @@ export interface Config {
     secret: string;
   };
   app: {
-    nodeEnv: "development" | "production" | "test";
+    nodeEnv: 'development' | 'production' | 'test';
     port: number;
   };
 }

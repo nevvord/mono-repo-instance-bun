@@ -8,7 +8,19 @@ This is a monorepo using Bun as the package manager and runtime with the followi
 mono-repo/
 ├── .pro/                   # Generated files (ignored by git)
 │   └── prisma/            # Generated Prisma client
+├── docs/                  # 📚 Project documentation
+│   ├── README.md          # Documentation index
+│   ├── project-overview.md # Main project documentation
+│   ├── pm2-deployment.md  # PM2 deployment guide
+│   ├── web-ui-readme.md   # Web UI documentation
+│   ├── admin-ui-readme.md # Admin UI documentation
+│   ├── core-readme.md     # Core package documentation
+│   └── config-readme.md   # Configuration documentation
 ├── packages/              # All applications and packages
+│   ├── core/              # Shared types, config, and utilities
+│   ├── backend/           # API server with Hono
+│   ├── web-ui/            # React 18 web interface with Radix UI
+│   └── admin-ui/          # React 18 admin panel with Radix UI
 ├── prisma/               # Database configuration
 │   └── schema/           # Multi-file Prisma schema
 │       ├── base.prisma   # Main config (generator, datasource)
@@ -18,9 +30,9 @@ mono-repo/
 ├── config/               # Configuration files
 │   ├── index.ts          # Re-exports only (entry point)
 │   ├── validate-config.ts # Config validation function
-│   ├── types/config.ts   # Type definitions
-│   └── README.md         # Configuration documentation
+│   └── types/config.ts   # Type definitions
 ├── .env.example          # Environment variables example
+├── ecosystem.config.cjs  # PM2 process manager configuration
 └── package.json          # Root package configuration
 ```
 
@@ -29,7 +41,13 @@ mono-repo/
 - **Runtime**: Bun (JavaScript runtime and package manager)
 - **Database**: PostgreSQL with Prisma ORM
 - **Language**: TypeScript
-- **Architecture**: Monorepo structure
+- **Architecture**: Monorepo structure with Bun workspaces
+- **Backend**: Hono (fast web framework)
+- **Frontend**: React 18 with Radix UI components
+- **Styling**: Tailwind CSS with CSS variables
+- **Icons**: Lucide React
+- **Process Management**: PM2
+- **Package Manager**: Bun workspaces
 
 ## Database Models
 
@@ -84,11 +102,40 @@ bunx prisma studio --schema=prisma/schema
 # Install dependencies
 bun install
 
-# Run development server
-bun run dev
+# Backend
+bun run backend:dev      # Start backend development server
+bun run backend:start    # Start backend production server
+bun run backend:stop     # Stop backend server
+bun run backend:restart  # Restart backend server
+bun run backend:logs     # View backend logs
+bun run backend:status   # Check backend status
 
-# Run main application
-bun run index.ts
+# Web UI
+bun run web-ui:dev       # Start web UI development server
+bun run web-ui:build     # Build web UI for production
+bun run web-ui:test      # Run web UI tests
+
+# Admin UI
+bun run admin-ui:dev     # Start admin UI development server
+bun run admin-ui:build   # Build admin UI for production
+bun run admin-ui:test    # Run admin UI tests
+
+# All Services
+bun run dev:all          # Start all services in development
+bun run start:all        # Start all services in production
+bun run stop:all         # Stop all services
+bun run restart:all      # Restart all services
+bun run logs:all         # View all logs
+bun run status:all       # Check status of all services
+
+# Code Quality
+bun run lint             # Run ESLint on all files
+bun run lint:fix         # Fix ESLint issues automatically
+bun run format           # Format code with Prettier
+bun run format:check     # Check code formatting
+bun run type-check       # Run TypeScript type checking
+bun run check            # Run all checks (type-check + lint + format:check)
+bun run check:fix        # Fix all issues (lint:fix + format)
 ```
 
 ## File Naming Conventions
@@ -165,6 +212,134 @@ feature/
 2. Initialize with `bun init`
 3. Add shared dependencies to root `package.json`
 4. Import Prisma client from `../.pro/prisma`
+5. Update workspace configuration in root `package.json`
+6. Add PM2 configuration to `ecosystem.config.cjs` if needed
+7. Update scripts in root `package.json`
+
+## Package Structure
+
+### Core Package (`packages/core/`)
+
+- Shared types and interfaces
+- Configuration validation
+- Utility functions
+- Common constants
+
+### Backend Package (`packages/backend/`)
+
+- Hono web framework
+- API routes and handlers
+- Database operations
+- Authentication logic
+
+### Web UI Package (`packages/web-ui/`)
+
+- React 18 application
+- Radix UI components
+- Tailwind CSS styling
+- User-facing interface
+
+### Admin UI Package (`packages/admin-ui/`)
+
+- React 18 admin panel
+- Radix UI components
+- Tailwind CSS styling
+- Administrative interface
+
+## Service Ports and URLs
+
+- **Backend API**: http://localhost:3000
+- **Web UI**: http://localhost:3001
+- **Admin UI**: http://localhost:3002
+
+## Process Management
+
+- **PM2**: Used for managing all services
+- **Development**: Hot reload with file watching
+- **Production**: Process management with auto-restart
+- **Logs**: Centralized logging for all services
+- **Monitoring**: Process status and resource usage
+
+## UI Components and Styling
+
+### Radix UI Components
+
+- **Button**: Multiple variants (default, outline, ghost, destructive)
+- **Card**: Header, content, footer sections
+- **Badge**: Status indicators and labels
+- **Tabs**: Tabbed navigation and content
+- **Dialog**: Modal dialogs and overlays
+- **Dropdown**: Dropdown menus and selectors
+- **Form**: Form controls and validation
+- **Navigation**: Navigation menus and breadcrumbs
+
+### Tailwind CSS
+
+- **Utility-first**: Rapid styling with utility classes
+- **CSS Variables**: Theme customization with CSS custom properties
+- **Dark Mode**: Built-in dark mode support
+- **Responsive**: Mobile-first responsive design
+- **Animations**: Smooth transitions and animations
+
+### Icons
+
+- **Lucide React**: Consistent icon library
+- **Usage**: Import icons as React components
+- **Styling**: Customizable size and color
+
+## Development and Testing
+
+### Development Workflow
+
+1. **Setup**: Copy `.env.example` to `.env` and configure
+2. **Install**: Run `bun install` to install all dependencies
+3. **Database**: Run Prisma migrations and generate client
+4. **Start**: Use PM2 commands to start services
+5. **Develop**: Make changes with hot reload enabled
+
+### Testing
+
+- **Unit Tests**: Bun test with JSDOM for React components
+- **Testing Library**: @testing-library/react for component testing
+- **Jest DOM**: @testing-library/jest-dom for DOM matchers
+- **Backend Tests**: Bun test for API and configuration testing
+- **Type Checking**: TypeScript strict mode enabled
+- **Linting**: ESLint for code quality
+- **Formatting**: Prettier for consistent code style
+
+### Test Configuration
+
+- **JSDOM Setup**: Global DOM environment for React testing
+- **Mock Functions**: getComputedStyle, requestAnimationFrame, etc.
+- **Test Commands**: `bun test`, `bun test --watch`, `bun test --coverage`
+- **Test Files**: `*.test.ts`, `*.test.tsx` patterns
+- **Setup Files**: `test-setup.ts` for global configuration
+
+### Code Quality
+
+- **TypeScript**: Strict mode with proper typing
+- **ESLint**: Latest version (v9) with TypeScript support
+- **Prettier**: Code formatting with consistent rules
+- **Configuration**: Root-level configs for all packages
+- **Commands**: Centralized quality checks from root
+
+### ESLint Configuration
+
+- **Version**: ESLint 9 (latest)
+- **TypeScript**: Full TypeScript support
+- **React**: React-specific rules for UI packages
+- **Prettier**: Integration with Prettier
+- **Rules**: Strict but practical rules
+- **Ignores**: Config files and generated code
+
+### Prettier Configuration
+
+- **Single quotes**: Enabled
+- **Semicolons**: Enabled
+- **Trailing commas**: ES5
+- **Print width**: 80 characters
+- **Tab width**: 2 spaces
+- **JSX quotes**: Single quotes
 
 ## Authentication System
 
@@ -180,3 +355,13 @@ feature/
 - Maintain single source of truth in `base.prisma` for config
 - Always specify `--schema=prisma/schema` for Prisma commands
 - Use `.pro/` for all generated files to keep workspace clean
+- Use Bun workspaces for package management
+- Use PM2 for process management in development and production
+- Follow kebab-case naming convention for all files and directories
+- Use TypeScript strict mode for all packages
+- Use Radix UI components for consistent design
+- Use Tailwind CSS for styling with CSS variables
+- Use Lucide React for icons
+- Keep one function per file (functional programming approach)
+- Separate types in `types/` directories
+- Use named exports, avoid default exports for functions

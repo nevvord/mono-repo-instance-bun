@@ -1,22 +1,17 @@
 {
   "name": "@mono-repo/core",
   "version": "1.0.0",
-  "type": "module",
+  "description": "Shared types, config, and utilities",
   "main": "index.ts",
-  "exports": {
-    "./config": "./config/index.ts",
-    "./types": "./types/index.ts",
-    "./utils": "./utils/index.ts"
-  },
   "scripts": {
-    "dev": "bun run index.ts",
-    "build": "bun build index.ts --outdir dist",
-    "type-check": "tsc --noEmit"
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "typescript": "^5"
-  },
-  "dependencies": {},
-  "peerDependencies": {}
+    "@types/bun": "latest"
+  }
 }

@@ -1,28 +1,48 @@
 {
   "compilerOptions": {
-    // Environment setup & latest features
-    "lib": ["ESNext"],
-    "target": "ESNext",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "moduleDetection": "force",
-    "jsx": "react-jsx",
-    "allowJs": true,
-
-    // Bundler mode
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
     "noEmit": true,
-
-    // Best practices
+    "jsx": "react-jsx",
     "strict": true,
-    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-
-    // Some stricter flags (disabled by default)
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
-  }
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@mono-repo/core": ["packages/core"],
+      "@mono-repo/core/*": ["packages/core/*"],
+      "@mono-repo/backend": ["packages/backend"],
+      "@mono-repo/web-ui": ["packages/web-ui"],
+      "@mono-repo/admin-ui": ["packages/admin-ui"]
+    }
+  },
+  "include": [
+    "packages/*/src/**/*",
+    "packages/*/index.ts",
+    "config/**/*",
+    "*.ts",
+    "*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "packages/*/node_modules",
+    "packages/*/build",
+    "packages/*/dist",
+    ".pro",
+    "*.config.js",
+    "*.config.ts"
+  ]
 }

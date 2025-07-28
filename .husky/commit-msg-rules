@@ -1,0 +1,49 @@
+# Commit Message Rules
+
+## Format
+
+Commit messages should follow this format:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer]
+```
+
+## Types
+
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code refactoring
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
+
+## Examples
+
+✅ Good:
+
+- `feat(auth): add user authentication system`
+- `fix(api): resolve database connection issue`
+- `docs(readme): update installation instructions`
+- `style(ui): format components with prettier`
+- `test(core): add unit tests for config validation`
+
+❌ Bad:
+
+- `fix bug`
+- `update`
+- `wip`
+- `stuff`
+
+## Rules
+
+1. Use English language only
+2. Use present tense ("add" not "added")
+3. Use imperative mood ("move" not "moves")
+4. Don't capitalize first letter
+5. No dot at the end
+6. Maximum 72 characters for the first line
