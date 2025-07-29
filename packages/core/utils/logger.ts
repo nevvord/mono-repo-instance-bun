@@ -6,7 +6,7 @@ export enum LogLevel {
 }
 
 export interface LogContext {
-  [key: string]: string | number | boolean | null | undefined;
+  [key: string]: any;
 }
 
 class Logger {
@@ -32,42 +32,27 @@ class Logger {
     return level <= this.level;
   }
 
-  private logToConsole(
-    level: string,
-    message: string,
-    context?: LogContext
-  ): void {
-    const formattedMessage = this.formatMessage(level, message, context);
-    // In a real application, you would use a proper logging library
-    // For now, we'll use process.stdout/stderr for testing
-    if (level === 'ERROR') {
-      process.stderr.write(formattedMessage + '\n');
-    } else {
-      process.stdout.write(formattedMessage + '\n');
-    }
-  }
-
   error(message: string, context?: LogContext): void {
     if (this.shouldLog(LogLevel.ERROR)) {
-      this.logToConsole('ERROR', message, context);
+      console.error(this.formatMessage('ERROR', message, context));
     }
   }
 
   warn(message: string, context?: LogContext): void {
     if (this.shouldLog(LogLevel.WARN)) {
-      this.logToConsole('WARN', message, context);
+      console.warn(this.formatMessage('WARN', message, context));
     }
   }
 
   info(message: string, context?: LogContext): void {
     if (this.shouldLog(LogLevel.INFO)) {
-      this.logToConsole('INFO', message, context);
+      console.info(this.formatMessage('INFO', message, context));
     }
   }
 
   debug(message: string, context?: LogContext): void {
     if (this.shouldLog(LogLevel.DEBUG)) {
-      this.logToConsole('DEBUG', message, context);
+      console.debug(this.formatMessage('DEBUG', message, context));
     }
   }
 

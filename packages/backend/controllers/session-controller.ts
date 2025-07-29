@@ -9,43 +9,46 @@ import { Context } from 'hono';
 
 const logger = createLogger('SessionController');
 
-type AuthenticatedContext = Context<{
-  Variables: {
-    user: {
-      id: string;
-      email: string;
-      username: string;
-      isActive: boolean;
-      isVerified: boolean;
-      role: string;
+export const getSessions = async (
+  c: Context<{
+    Variables: {
+      user: {
+        id: string;
+        email: string;
+        username: string;
+        isActive: boolean;
+        isVerified: boolean;
+        role: string;
+      };
+      session: {
+        id: string;
+        token: string;
+        expiresAt: Date;
+      };
     };
-    session: {
-      id: string;
-      token: string;
-      expiresAt: Date;
-    };
-  };
-}>;
-
-export const getSessions = async (c: AuthenticatedContext) => {
+  }>
+) => {
   try {
-    logger.info('Getting user sessions', { userId: c.var.user.id });
+    const user = c.var.user;
+    const session = c.var.session;
 
-    const sessions = await getUserSessions(c.var.user.id);
+    logger.info('Getting user sessions', { userId: user.id });
+
+    const sessions = await getUserSessions(user.id);
 
     // Remove sensitive data from response
-    const safeSessions = sessions.map(session => ({
-      id: session.id,
-      expiresAt: session.expiresAt,
-      userAgent: session.userAgent,
-      ipAddress: session.ipAddress,
-      isActive: session.isActive,
-      createdAt: session.createdAt,
-      isCurrentSession: session.id === c.var.session.id,
+    const safeSessions = sessions.map(sessionItem => ({
+      id: sessionItem.id,
+      expiresAt: sessionItem.expiresAt,
+      userAgent: sessionItem.userAgent,
+      ipAddress: sessionItem.ipAddress,
+      isActive: sessionItem.isActive,
+      createdAt: sessionItem.createdAt,
+      isCurrentSession: sessionItem.id === session.id,
     }));
 
     logger.success('User sessions retrieved successfully', {
-      userId: c.var.user.id,
+      userId: user.id,
       sessionCount: sessions.length,
     });
 
@@ -54,9 +57,10 @@ export const getSessions = async (c: AuthenticatedContext) => {
       sessions: safeSessions,
     });
   } catch (error) {
+    const user = c.var.user;
     logger.fail('Error getting user sessions', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      userId: c.var.user.id,
+      userId: user.id,
     });
     return c.json(
       {
@@ -68,8 +72,28 @@ export const getSessions = async (c: AuthenticatedContext) => {
   }
 };
 
-export const getSession = async (c: AuthenticatedContext) => {
+export const getSession = async (
+  c: Context<{
+    Variables: {
+      user: {
+        id: string;
+        email: string;
+        username: string;
+        isActive: boolean;
+        isVerified: boolean;
+        role: string;
+      };
+      session: {
+        id: string;
+        token: string;
+        expiresAt: Date;
+      };
+    };
+  }>
+) => {
   try {
+    const user = c.var.user;
+    const session = c.var.session;
     const sessionId = c.req.param('sessionId');
 
     if (!sessionId) {
@@ -83,12 +107,12 @@ export const getSession = async (c: AuthenticatedContext) => {
       );
     }
 
-    logger.info('Getting session info', { userId: c.var.user.id, sessionId });
+    logger.info('Getting session info', { userId: user.id, sessionId });
 
-    const session = await getSessionInfo(c.var.user.id, sessionId);
+    const sessionInfo = await getSessionInfo(user.id, sessionId);
 
-    if (!session) {
-      logger.warn('Session not found', { userId: c.var.user.id, sessionId });
+    if (!sessionInfo) {
+      logger.warn('Session not found', { userId: user.id, sessionId });
       return c.json(
         {
           success: false,
@@ -100,17 +124,17 @@ export const getSession = async (c: AuthenticatedContext) => {
 
     // Remove sensitive data from response
     const safeSession = {
-      id: session.id,
-      expiresAt: session.expiresAt,
-      userAgent: session.userAgent,
-      ipAddress: session.ipAddress,
-      isActive: session.isActive,
-      createdAt: session.createdAt,
-      isCurrentSession: session.id === c.var.session.id,
+      id: sessionInfo.id,
+      expiresAt: sessionInfo.expiresAt,
+      userAgent: sessionInfo.userAgent,
+      ipAddress: sessionInfo.ipAddress,
+      isActive: sessionInfo.isActive,
+      createdAt: sessionInfo.createdAt,
+      isCurrentSession: sessionInfo.id === session.id,
     };
 
     logger.success('Session info retrieved successfully', {
-      userId: c.var.user.id,
+      userId: user.id,
       sessionId,
     });
 
@@ -119,9 +143,10 @@ export const getSession = async (c: AuthenticatedContext) => {
       session: safeSession,
     });
   } catch (error) {
+    const user = c.var.user;
     logger.fail('Error getting session info', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      userId: c.var.user.id,
+      userId: user.id,
     });
     return c.json(
       {
@@ -133,8 +158,28 @@ export const getSession = async (c: AuthenticatedContext) => {
   }
 };
 
-export const terminateSessionById = async (c: AuthenticatedContext) => {
+export const terminateSessionById = async (
+  c: Context<{
+    Variables: {
+      user: {
+        id: string;
+        email: string;
+        username: string;
+        isActive: boolean;
+        isVerified: boolean;
+        role: string;
+      };
+      session: {
+        id: string;
+        token: string;
+        expiresAt: Date;
+      };
+    };
+  }>
+) => {
   try {
+    const user = c.var.user;
+    const session = c.var.session;
     const sessionId = c.req.param('sessionId');
 
     if (!sessionId) {
@@ -148,34 +193,42 @@ export const terminateSessionById = async (c: AuthenticatedContext) => {
       );
     }
 
-    logger.info('Terminating session', { userId: c.var.user.id, sessionId });
-
-    const success = await terminateSession(c.var.user.id, sessionId);
-
-    if (!success) {
-      logger.warn('Session not found or cannot be terminated', {
-        userId: c.var.user.id,
+    // Prevent terminating current session through this endpoint
+    if (sessionId === session.id) {
+      logger.warn('Attempt to terminate current session', {
+        userId: user.id,
         sessionId,
       });
       return c.json(
         {
           success: false,
-          error: 'Session not found or cannot be terminated',
+          error:
+            'Cannot terminate current session. Use logout endpoint instead.',
+        },
+        400
+      );
+    }
+
+    logger.info('Terminating session', { userId: user.id, sessionId });
+
+    const terminated = await terminateSession(user.id, sessionId);
+
+    if (!terminated) {
+      logger.warn('Session not found or already terminated', {
+        userId: user.id,
+        sessionId,
+      });
+      return c.json(
+        {
+          success: false,
+          error: 'Session not found or already terminated',
         },
         404
       );
     }
 
-    // If terminating current session, clear cookie
-    if (sessionId === c.var.session.id) {
-      c.header(
-        'Set-Cookie',
-        'session_token=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/'
-      );
-    }
-
     logger.success('Session terminated successfully', {
-      userId: c.var.user.id,
+      userId: user.id,
       sessionId,
     });
 
@@ -184,9 +237,10 @@ export const terminateSessionById = async (c: AuthenticatedContext) => {
       message: 'Session terminated successfully',
     });
   } catch (error) {
+    const user = c.var.user;
     logger.fail('Error terminating session', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      userId: c.var.user.id,
+      userId: user.id,
     });
     return c.json(
       {
@@ -198,20 +252,34 @@ export const terminateSessionById = async (c: AuthenticatedContext) => {
   }
 };
 
-export const terminateAllUserSessions = async (c: AuthenticatedContext) => {
+export const terminateAllUserSessions = async (
+  c: Context<{
+    Variables: {
+      user: {
+        id: string;
+        email: string;
+        username: string;
+        isActive: boolean;
+        isVerified: boolean;
+        role: string;
+      };
+      session: {
+        id: string;
+        token: string;
+        expiresAt: Date;
+      };
+    };
+  }>
+) => {
   try {
-    logger.info('Terminating all user sessions', { userId: c.var.user.id });
+    const user = c.var.user;
 
-    const terminatedCount = await terminateAllSessions(c.var.user.id);
+    logger.info('Terminating all user sessions', { userId: user.id });
 
-    // Clear current session cookie
-    c.header(
-      'Set-Cookie',
-      'session_token=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/'
-    );
+    const terminatedCount = await terminateAllSessions(user.id);
 
     logger.success('All user sessions terminated successfully', {
-      userId: c.var.user.id,
+      userId: user.id,
       terminatedCount,
     });
 
@@ -221,39 +289,58 @@ export const terminateAllUserSessions = async (c: AuthenticatedContext) => {
       terminatedCount,
     });
   } catch (error) {
+    const user = c.var.user;
     logger.fail('Error terminating all sessions', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      userId: c.var.user.id,
+      userId: user.id,
     });
     return c.json(
       {
         success: false,
-        error: 'Failed to terminate all sessions',
+        error: 'Failed to terminate sessions',
       },
       500
     );
   }
 };
 
-export const logout = async (c: AuthenticatedContext) => {
+export const logout = async (
+  c: Context<{
+    Variables: {
+      user: {
+        id: string;
+        email: string;
+        username: string;
+        isActive: boolean;
+        isVerified: boolean;
+        role: string;
+      };
+      session: {
+        id: string;
+        token: string;
+        expiresAt: Date;
+      };
+    };
+  }>
+) => {
   try {
-    logger.info('User logout', {
-      userId: c.var.user.id,
-      sessionId: c.var.session.id,
-    });
+    const user = c.var.user;
+    const session = c.var.session;
+
+    logger.info('User logging out', { userId: user.id, sessionId: session.id });
 
     // Terminate current session
-    await terminateSession(c.var.user.id, c.var.session.id);
+    await terminateSession(user.id, session.id);
 
     // Clear session cookie
     c.header(
       'Set-Cookie',
-      'session_token=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/'
+      'session_token=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict'
     );
 
     logger.success('User logged out successfully', {
-      userId: c.var.user.id,
-      sessionId: c.var.session.id,
+      userId: user.id,
+      sessionId: session.id,
     });
 
     return c.json({
@@ -261,9 +348,10 @@ export const logout = async (c: AuthenticatedContext) => {
       message: 'Logged out successfully',
     });
   } catch (error) {
+    const user = c.var.user;
     logger.fail('Error during logout', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      userId: c.var.user.id,
+      userId: user.id,
     });
     return c.json(
       {

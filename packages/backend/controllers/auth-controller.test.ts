@@ -1,40 +1,15 @@
-import { describe, it, expect, beforeEach, afterEach, mock } from 'bun:test';
+import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import { Hono } from 'hono';
 import { register, login } from './auth-controller';
-
-// Mock bcrypt
-const mockBcrypt = {
-  hash: mock(() => Promise.resolve('$2b$10$mocked.hash')),
-  compare: mock(() => Promise.resolve(true)),
-};
-
-// Mock Prisma with proper typing
-const mockPrisma = {
-  user: {
-    findFirst: mock(() => Promise.resolve(null)),
-    create: mock(() => Promise.resolve({})),
-  },
-  session: {
-    create: mock(() => Promise.resolve({})),
-    findFirst: mock(() => Promise.resolve(null)),
-    deleteMany: mock(() => Promise.resolve({})),
-  },
-};
-
-// Mock the prisma import
-mock.module('../lib', () => ({
-  prisma: mockPrisma,
-}));
-
-// Mock bcrypt import
-mock.module('bcryptjs', () => mockBcrypt);
+import { prisma } from '../lib';
 
 describe('AuthController', () => {
   let app: Hono;
 
-  beforeEach(() => {
-    // Reset all mocks before each test
-    mock.restore();
+  beforeEach(async () => {
+    // Clean up database before each test
+    await prisma.session.deleteMany();
+    await prisma.user.deleteMany();
 
     // Create test app
     app = new Hono();
@@ -42,28 +17,14 @@ describe('AuthController', () => {
     app.post('/login', login);
   });
 
-  afterEach(() => {
-    // Clean up mocks after each test
-    mock.restore();
+  afterEach(async () => {
+    // Clean up database after each test
+    await prisma.session.deleteMany();
+    await prisma.user.deleteMany();
   });
 
   describe('register', () => {
     it('should register user successfully', async () => {
-      // Mock that user doesn't exist
-      mockPrisma.user.findFirst.mockResolvedValue(null);
-
-      // Mock successful user creation
-      mockPrisma.user.create.mockResolvedValue({
-        id: '1',
-        email: 'test@example.com',
-        username: 'test@example.com',
-        isActive: true,
-        isVerified: false,
-        role: 'USER',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as never);
-
       const response = await app.request('/register', {
         method: 'POST',
         headers: {
@@ -156,34 +117,19 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should login user successfully', async () => {
-      // Mock user exists with correct password hash
-      mockPrisma.user.findFirst.mockResolvedValue({
-        id: '1',
-        email: 'test@example.com',
-        username: 'test@example.com',
-        password: '$2b$10$test.hash', // Mock bcrypt hash
-        isActive: true,
-        isVerified: false,
-        role: 'USER',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as never);
+      // First register a user
+      await app.request('/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: 'test@example.com',
+          password: 'password123',
+        }),
+      });
 
-      // Mock bcrypt.compare to return true for correct password
-      mockBcrypt.compare.mockResolvedValue(true);
-
-      // Mock session creation
-      mockPrisma.session.create.mockResolvedValue({
-        id: '1',
-        userId: '1',
-        token: 'test-token',
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        userAgent: 'Test Browser',
-        ipAddress: '192.168.1.1',
-        isActive: true,
-        createdAt: new Date(),
-      } as never);
-
+      // Then try to login
       const response = await app.request('/login', {
         method: 'POST',
         headers: {
@@ -243,22 +189,19 @@ describe('AuthController', () => {
     });
 
     it('should fail with incorrect password', async () => {
-      // Mock user exists but password won't match
-      mockPrisma.user.findFirst.mockResolvedValue({
-        id: '1',
-        email: 'test@example.com',
-        username: 'test@example.com',
-        password: '$2b$10$test.hash', // Different hash
-        isActive: true,
-        isVerified: false,
-        role: 'USER',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as never);
+      // First register a user
+      await app.request('/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: 'test@example.com',
+          password: 'password123',
+        }),
+      });
 
-      // Mock bcrypt.compare to return false for wrong password
-      mockBcrypt.compare.mockResolvedValue(false);
-
+      // Then try to login with wrong password
       const response = await app.request('/login', {
         method: 'POST',
         headers: {
@@ -277,9 +220,6 @@ describe('AuthController', () => {
     });
 
     it('should fail with non-existent user', async () => {
-      // Mock user doesn't exist
-      mockPrisma.user.findFirst.mockResolvedValue(null);
-
       const response = await app.request('/login', {
         method: 'POST',
         headers: {

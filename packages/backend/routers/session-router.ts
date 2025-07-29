@@ -1,5 +1,8 @@
 import { Hono } from 'hono';
-import { authenticateUser } from '../middleware/auth-middleware';
+import {
+  authenticateUser,
+  AuthenticatedContext,
+} from '../middleware/auth-middleware';
 import {
   getSessions,
   getSession,
@@ -11,19 +14,8 @@ import {
 // Create a typed router that knows about AuthenticatedContext
 const sessionRouter = new Hono<{
   Variables: {
-    user: {
-      id: string;
-      email: string;
-      username: string;
-      isActive: boolean;
-      isVerified: boolean;
-      role: string;
-    };
-    session: {
-      id: string;
-      token: string;
-      expiresAt: Date;
-    };
+    user: AuthenticatedContext['user'];
+    session: AuthenticatedContext['session'];
   };
 }>();
 

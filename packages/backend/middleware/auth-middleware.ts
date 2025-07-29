@@ -5,6 +5,22 @@ import { randomBytes } from 'crypto';
 
 const logger = createLogger('AuthMiddleware');
 
+export interface AuthenticatedContext extends Context {
+  user: {
+    id: string;
+    email: string;
+    username: string;
+    isActive: boolean;
+    isVerified: boolean;
+    role: string;
+  };
+  session: {
+    id: string;
+    token: string;
+    expiresAt: Date;
+  };
+}
+
 export const authenticateUser = async (c: Context, next: Next) => {
   try {
     // Get session token from cookie
@@ -118,13 +134,13 @@ export const authenticateUser = async (c: Context, next: Next) => {
       session.expiresAt = newExpiresAt;
     }
 
-    // Add user and session to context variables
-    c.set('user', session.user);
-    c.set('session', {
+    // Add user and session to context
+    (c as AuthenticatedContext).user = session.user;
+    (c as AuthenticatedContext).session = {
       id: session.id,
       token: session.token,
       expiresAt: session.expiresAt,
-    });
+    };
 
     logger.info('User authenticated successfully', {
       userId: session.user.id,
@@ -148,12 +164,11 @@ export const authenticateUser = async (c: Context, next: Next) => {
 };
 
 export const requireRole = (requiredRole: string) => {
-  return async (c: Context, next: Next) => {
-    const user = c.var.user;
-    if (user.role !== requiredRole && user.role !== 'ADMIN') {
+  return async (c: AuthenticatedContext, next: Next) => {
+    if (c.user.role !== requiredRole && c.user.role !== 'ADMIN') {
       logger.warn('Access denied: insufficient role', {
-        userId: user.id,
-        userRole: user.role,
+        userId: c.user.id,
+        userRole: c.user.role,
         requiredRole,
       });
       return c.json(
